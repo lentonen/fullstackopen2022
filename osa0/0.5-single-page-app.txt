@@ -1,0 +1,13 @@
+note over selain:
+Lomakkeen tietojen lähettäminen hoidetaan JavaScriptillä
+end note
+
+note over selain:
+Selain suorittaa tapahtumankäsittelijän,
+joka luo muistiinpanon,lisää sen listalle ja 
+piirtää listan uudelleen.Lisäksi luotu 
+muistiinpano lähetetään palvelimelle JSON-merkkijonona.
+end note
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+palvelin-->selain: HTTP 201 created
