@@ -6,18 +6,22 @@ const Button = ({handleClick, text}) => (
   </button>
 )
 
-const StatisticsLine = ({text, value, unit}) => <div>{text} {value} {unit}</div>
+const StatisticsLine = ({text, value, unit}) => <tr><td>{text}</td><td>{value}</td></tr>
 
 const Statistics = ({statistics}) => {
   if (statistics.parts[3].value !== 0) {
     return (
       <div>
-        <StatisticsLine text={statistics.parts[0].text} value={statistics.parts[0].value} />
-        <StatisticsLine text={statistics.parts[1].text} value={statistics.parts[1].value} />
-        <StatisticsLine text={statistics.parts[2].text} value={statistics.parts[2].value} />
-        <StatisticsLine text={statistics.parts[3].text} value={statistics.parts[3].value} />
-        <StatisticsLine text={statistics.parts[4].text} value={statistics.parts[4].value} />
-        <StatisticsLine text={statistics.parts[5].text} value={statistics.parts[5].value +' %'} /> 
+        <table>
+          <tbody>
+            <StatisticsLine text={statistics.parts[0].text} value={statistics.parts[0].value} />
+            <StatisticsLine text={statistics.parts[1].text} value={statistics.parts[1].value} />
+            <StatisticsLine text={statistics.parts[2].text} value={statistics.parts[2].value} />
+            <StatisticsLine text={statistics.parts[3].text} value={statistics.parts[3].value} />
+            <StatisticsLine text={statistics.parts[4].text} value={statistics.parts[4].value} />
+            <StatisticsLine text={statistics.parts[5].text} value={statistics.parts[5].value +' %'} /> 
+          </tbody>
+        </table>
       </div>
     )
   }
