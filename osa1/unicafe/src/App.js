@@ -6,18 +6,18 @@ const Button = ({handleClick, text}) => (
   </button>
 )
 
-const StatisticsPart = ({text, value, unit}) => <div>{text} {value} {unit}</div>
+const StatisticsLine = ({text, value, unit}) => <div>{text} {value} {unit}</div>
 
 const Statistics = ({statistics}) => {
   if (statistics.parts[3].value !== 0) {
     return (
       <div>
-        <StatisticsPart text={statistics.parts[0].text} value={statistics.parts[0].value} />
-        <StatisticsPart text={statistics.parts[1].text} value={statistics.parts[1].value} />
-        <StatisticsPart text={statistics.parts[2].text} value={statistics.parts[2].value} />
-        <StatisticsPart text={statistics.parts[3].text} value={statistics.parts[3].value} />
-        <StatisticsPart text={statistics.parts[4].text} value={statistics.parts[4].value} />
-        <StatisticsPart text={statistics.parts[5].text} value={statistics.parts[5].value} unit={statistics.parts[5].unit} />
+        <StatisticsLine text={statistics.parts[0].text} value={statistics.parts[0].value} />
+        <StatisticsLine text={statistics.parts[1].text} value={statistics.parts[1].value} />
+        <StatisticsLine text={statistics.parts[2].text} value={statistics.parts[2].value} />
+        <StatisticsLine text={statistics.parts[3].text} value={statistics.parts[3].value} />
+        <StatisticsLine text={statistics.parts[4].text} value={statistics.parts[4].value} />
+        <StatisticsLine text={statistics.parts[5].text} value={statistics.parts[5].value +' %'} /> 
       </div>
     )
   }
@@ -45,32 +45,26 @@ const App = () => {
       {
         text: 'Good',
         value: good,
-        unit: ''
       },
       {
         text: 'Neutral',
         value: neutral,
-        unit: ''
       },
       {
         text: 'Bad',
         value: bad,
-        unit: ''
       },
       {
         text: 'All',
         value: all,
-        unit: ''
       },
       {
         text: 'Average',
         value: average,
-        unit: ''
       },
       {
         text: 'Positive',
         value: positivePercent,
-        unit: '%'
       }
     ]
   }
