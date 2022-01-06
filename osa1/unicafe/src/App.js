@@ -6,7 +6,25 @@ const Button = ({handleClick, text}) => (
   </button>
 )
 
-const Statistics = ({text, value, unit}) => <div>{text} {value} {unit}</div>
+const StatisticsPart = ({text, value, unit}) => <div>{text} {value} {unit}</div>
+
+const Statistics = ({statistics}) => {
+  if (statistics.parts[3].value !== 0) {
+    return (
+      <div>
+        <StatisticsPart text={statistics.parts[0].text} value={statistics.parts[0].value} />
+        <StatisticsPart text={statistics.parts[1].text} value={statistics.parts[1].value} />
+        <StatisticsPart text={statistics.parts[2].text} value={statistics.parts[2].value} />
+        <StatisticsPart text={statistics.parts[3].text} value={statistics.parts[3].value} />
+        <StatisticsPart text={statistics.parts[4].text} value={statistics.parts[4].value} />
+        <StatisticsPart text={statistics.parts[5].text} value={statistics.parts[5].value} unit={statistics.parts[5].unit} />
+      </div>
+    )
+  }
+  return (
+    <div>No feedback given</div>
+  )
+}  
 
 const App = () => {
   // tallenna napit omaan tilaansa
@@ -21,6 +39,41 @@ const App = () => {
   const all = good + neutral + bad
   const average = (good * 1 + neutral * 0 + bad * -1)/all
   const positivePercent = (good / all)*100
+
+  const statistics = {
+    parts: [
+      {
+        text: 'Good',
+        value: good,
+        unit: ''
+      },
+      {
+        text: 'Neutral',
+        value: neutral,
+        unit: ''
+      },
+      {
+        text: 'Bad',
+        value: bad,
+        unit: ''
+      },
+      {
+        text: 'All',
+        value: all,
+        unit: ''
+      },
+      {
+        text: 'Average',
+        value: average,
+        unit: ''
+      },
+      {
+        text: 'Positive',
+        value: positivePercent,
+        unit: '%'
+      }
+    ]
+  }
   
   return (
     <div>
@@ -29,12 +82,7 @@ const App = () => {
       <Button handleClick={giveNeutral} text='Neutral' />
       <Button handleClick={giveBad} text='Bad' />
       <h1>Statistics</h1>
-      <Statistics text='Good' value={good} />
-      <Statistics text='Neutral' value={neutral} />
-      <Statistics text='Bad' value={bad} />
-      <Statistics text='All' value={good + neutral + bad} />
-      <Statistics text='Average' value={average} />
-      <Statistics text='Positive' value={positivePercent} unit='%' />
+      <Statistics statistics={statistics} />
     </div>
   )
 }
