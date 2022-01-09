@@ -16,19 +16,34 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
   ]
-   
+
+  // Tila, joka kertoo mikä anekdootti näkyy
   const [selected, setSelected] = useState(0)
 
+  // Tila anekdoottien äänille.       Luo oikean mittaisen taulukon pisteille
+  const[points, setPoints] = useState(Array(anecdotes.length).fill(0))
+
+  // Arpoo kokonaisuluvun [min, max]
   const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * ( max - min + 1) + min)
   }
   
+  // Funktio, jonka avulla random anekdootti asetetaan
   const randomAnecdote = () => setSelected(randomIntFromInterval(0, anecdotes.length-1))
+
+  // Funktio anekdootin äänestämiseen
+  const voteAnecdote = () => {
+    const copy =[...points]
+    copy[selected] += 1
+    setPoints(copy)
+  }
 
   return (
     <div>
       {anecdotes[selected]}
+      <div>Has {points[selected]} votes</div>
       <div>
+        <Button handleClick={voteAnecdote} text='Vote' />
         <Button handleClick={randomAnecdote} text='Next anecdote' />
       </div>
     </div>
