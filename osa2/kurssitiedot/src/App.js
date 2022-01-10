@@ -1,5 +1,14 @@
 import React from 'react'
 
+const Total = ({course}) => {
+  const total = course.parts.reduce((total, part) => total + part.exercises, 0)
+  return (
+    <div>
+      <p><b>total of exercises {total}</b></p>
+    </div>
+  )
+}
+
 const Part = (props) => {
   return (
     <div>
@@ -62,6 +71,7 @@ const App = () => {
   return (
     <div>
       <Course course={course} />
+      <Total course={course} />
     </div>
   )
 }
