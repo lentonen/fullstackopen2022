@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
+
 // Komponentti hakukentälle
 const Search = ({setSearch}) => {
   const handleSearchChange = (event) => {
@@ -10,6 +11,7 @@ const Search = ({setSearch}) => {
     <div>find countries <input onChange={handleSearchChange}/></div>
   ) 
 }
+
 
 // Komponentti maassa puhuttujen kielien näyttämiseen
 const Languages = ({country}) => {
@@ -24,6 +26,7 @@ const Languages = ({country}) => {
   )
 }
 
+
 // Komponentti maan lipun näyttämistä varten
 const Flag = ({country}) => {
   const src = country.flags.png
@@ -31,12 +34,20 @@ const Flag = ({country}) => {
   return <div><img src={src}/></div>
 }
 
+
+// Komponentti maan lipun näyttämistä varten
+const Image = ({src}) => {
+  return <div><img src={src}/></div>
+}
+
+
 // Painike -komponentti
 const Button = ({handleClick, text}) => (
   <button onClick={handleClick}>
     {text}
   </button>
 )
+
 
 // Komponentti joka näyttää listan annetuista maista
 const CountryList = ({countriesToShow, handleShow}) => (
@@ -46,6 +57,40 @@ const CountryList = ({countriesToShow, handleShow}) => (
     )}
   </div>
 )
+
+
+const Weather = ({city}) => {
+  // Tämä tulisi oikeassa tilanteessa tallettaa back-end puolelle. 
+  // Demomielessä kovakoodataan apiKey tähän.
+  const apiKey = `${process.env.REACT_APP_API_KEY}`
+  const endPoint = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${city}`  
+
+  // Tila säätiedoille, aluksi null tilassa.
+  const [weather, setWeather] = useState(null)
+
+  // effect-hook säätietojen hakemiseen palvelimelta
+  useEffect(() => {
+    axios
+      .get(endPoint)
+      .then(response => {
+        setWeather(response.data)
+      })
+    }, [])
+    
+    if (weather) {
+      return (
+        <div>
+          <p><b>Temperature: </b>{weather.current.temperature} Celsius</p>
+          <Image src={weather.current.weather_icons[0]} />
+          <p><b>Wind: </b>{weather.current.wind_speed} mph, direction {weather.current.wind_dir}</p>
+        </div>
+      )
+    } // Jos weather === null, suoritetaan tämä. Tämä sen vuoksi, että komponentti renderöidään ennen kuin tiedot on saatu haettua
+    else {
+      return <div>Loading...</div>
+    }
+  }
+  
 
 // Komponentti yksittäisen maan tietojen näyttämiseen
 const SingleCountry = ({countriesToShow}) => (
@@ -58,10 +103,12 @@ const SingleCountry = ({countriesToShow}) => (
         <h4>Languages</h4>
         <Languages country={country}/>
         <Flag country = {country} />
+        <Weather city = {country.capital}/>
       </div>
     )}
   </div>
 )
+
 
 /* Komponentti hakutulosten näyttämiseen
  * Jos löydetään yli 10 maata, näytetään varoitusteksti "too many countries..."
@@ -83,7 +130,9 @@ const Results = ({countries, search, handleShow}) => {
     return <SingleCountry countriesToShow={countriesToShow} />
 }
 
+
 function App() {
+
 // Tilat
 const [countries, setCountries] = useState([])
 const [search, setSearch] = useState('')
