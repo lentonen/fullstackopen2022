@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+// Painike -komponentti
+const Button = ({handleClick, text}) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
+
+
 // Komponentti yksittäisen henkilön tiedoille
-const Person = ({person}) => <p key={person.name}>{person.name} {person.number}</p>
+const Person = ({person, handleDelete}) => <p key={person.name}>{person.name} {person.number} <Button handleClick={() => handleDelete(person)} text ="delete" /></p>
 
 // Komponentti filterin perusteella löydettyjen henkilöiden tietojen näyttämiselle
-const Persons = ({persons, filter}) => {
+const Persons = ({persons, filter, handleDelete}) => {
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-  return (
+  return ( 
     <div>
       {personsToShow.map(person => 
-        <Person key={person.name} person = {person} />
+        <Person key={person.name} person = {person} handleDelete = {handleDelete} />
       )}
     </div>
   )
@@ -70,6 +78,16 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  // Tapahtumankäsittelijä henkilön numeron poistamiselle
+  const handleDelete = (person) => {
+    const result = window.confirm(`Delete ${person.name}?`)
+    if (result) { // Poistetaan vain, jos valitaan "OK"
+      personService
+      .deleteObject(person.id)
+      .then(setPersons(persons.filter(p => p.id !== person.id)))
+    }
+  }
+
   // Lisää uuden henkilön tiedot palvelimelle ja päivittää tilan
   const addName = (event) => {
     event.preventDefault()
@@ -99,7 +117,7 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} handleDelete = {handleDelete} />
     </div>
   )
 
