@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
+// Komponentti yksittäisen henkilön tiedoille
 const Person = ({person}) => <p key={person.name}>{person.name} {person.number}</p>
 
-
+// Komponentti filterin perusteella löydettyjen henkilöiden tietojen näyttämiselle
 const Persons = ({persons, filter}) => {
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   return (
@@ -15,7 +17,7 @@ const Persons = ({persons, filter}) => {
   )
 }
 
-
+// Komponentti - nimien filtteröinti
 const Filter = ({setFilter}) => {
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
@@ -25,7 +27,7 @@ const Filter = ({setFilter}) => {
   ) 
 }
 
-
+// Komponentti - lomake nimen ja numeron lisäämiselle
 const PersonForm = ({addName, newName, handleNameChange, handleNumberChange, newNumber}) => {
   return (
     <div>
@@ -59,23 +61,30 @@ const App = () => {
   }, [])
 
 
-  // Tapahtumankäsittelijät
+  // Tapahtumankäsittelijä "name" -kentälle
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
 
+  // Tapahtumankäsittelijä "number" -kentälle
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
 
+  // Lisää uuden henkilön tiedot palvelimelle ja päivittää tilan
   const addName = (event) => {
     event.preventDefault()
     if (persons.filter(person => person.name === newName).length === 0) {
-      const nameObject = {
+      const personObject = {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(nameObject))
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(personObject))  
+        })
+      
     }
     else {
       window.alert(`${newName} is already added to phonebook`)
