@@ -82,29 +82,40 @@ const App = () => {
   const handleDelete = (person) => {
     const result = window.confirm(`Delete ${person.name}?`)
     if (result) { // Poistetaan vain, jos valitaan "OK"
+      console.log(persons)
+      console.log(person.id)
       personService
       .deleteObject(person.id)
-      .then(setPersons(persons.filter(p => p.id !== person.id)))
+      .then(setPersons(persons.filter(p => p.id !== person.id))).catch(() => console.log('hämminkiä'))
     }
+    console.log(persons)
   }
 
   // Lisää uuden henkilön tiedot palvelimelle ja päivittää tilan
   const addName = (event) => {
     event.preventDefault()
+    const personObject = {name: newName, number: newNumber}
     if (persons.filter(person => person.name === newName).length === 0) {
-      const personObject = {
-        name: newName,
-        number: newNumber
-      }
       personService
         .create(personObject)
         .then(returnedPerson => {
-          setPersons(persons.concat(personObject))  
+          setPersons(persons.concat(returnedPerson))  
         })
-      
     }
     else {
-      window.alert(`${newName} is already added to phonebook`)
+      const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number
+      with a new one?`)
+      if (confirm) { // päivitetään vain, jos valitaan "OK"
+        const id = persons.find(person => person.name === newName).id   // Päivitettävän henkilön id
+        const updatedPersons = [...persons]                             // Kopio päivitettävästä persons-listasta
+        const index = persons.findIndex(person => person.id === id)     // Indeksi jossa päivitettävät hlö on                     
+        personService
+          .update(id, personObject)
+          .then(returnedPerson => {
+            updatedPersons[index] = returnedPerson                      // Lopullinen päivitetty lista
+            setPersons(updatedPersons)  
+          })
+      }
     }
     setNewName('')
     setNewNumber('')
