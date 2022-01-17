@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 // Painike -komponentti
 const Button = ({handleClick, text}) => (
@@ -56,6 +57,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationStyle, setNotificationStyle] = useState(null)
 
   
   // effect-hook henkilöiden hakemiseen palvelimelta
@@ -82,13 +85,21 @@ const App = () => {
   const handleDelete = (person) => {
     const result = window.confirm(`Delete ${person.name}?`)
     if (result) { // Poistetaan vain, jos valitaan "OK"
-      console.log(persons)
-      console.log(person.id)
       personService
       .deleteObject(person.id)
-      .then(setPersons(persons.filter(p => p.id !== person.id))).catch(() => console.log('hämminkiä'))
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== person.id))
+        handleNotification(`Deleted ${person.name}`, 'successful') 
+      })
     }
-    console.log(persons)
+  }
+
+  const handleNotification = (message, type) => {
+    setNotificationStyle(type)
+          setNotificationMessage(message)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)  
   }
 
   // Lisää uuden henkilön tiedot palvelimelle ja päivittää tilan
@@ -99,8 +110,10 @@ const App = () => {
       personService
         .create(personObject)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))  
+          setPersons(persons.concat(returnedPerson))
+          handleNotification(`Added ${newName}`, 'successful') 
         })
+        console.log(notificationStyle)
     }
     else {
       const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number
@@ -113,7 +126,8 @@ const App = () => {
           .update(id, personObject)
           .then(returnedPerson => {
             updatedPersons[index] = returnedPerson                      // Lopullinen päivitetty lista
-            setPersons(updatedPersons)  
+            setPersons(updatedPersons)
+            handleNotification(`Updated ${newName}`, 'successful')   
           })
       }
     }
@@ -124,6 +138,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notificationMessage} type = {notificationStyle} />
       <Filter setFilter = {setFilter} />
       <h2>Add a new</h2>
       <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
