@@ -1,7 +1,6 @@
 import React from 'react'
 
 const Notification = ({ message, type }) => {
-  console.log(type)
     const error = {
       color: 'red',
       fontColor:'red',

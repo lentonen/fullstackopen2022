@@ -1,54 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 import Notification from './components/Notification'
-
-// Painike -komponentti
-const Button = ({handleClick, text}) => (
-  <button onClick={handleClick}>
-    {text}
-  </button>
-)
-
-
-// Komponentti yksittäisen henkilön tiedoille
-const Person = ({person, handleDelete}) => <p key={person.name}>{person.name} {person.number} <Button handleClick={() => handleDelete(person)} text ="delete" /></p>
-
-// Komponentti filterin perusteella löydettyjen henkilöiden tietojen näyttämiselle
-const Persons = ({persons, filter, handleDelete}) => {
-  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-  return ( 
-    <div>
-      {personsToShow.map(person => 
-        <Person key={person.name} person = {person} handleDelete = {handleDelete} />
-      )}
-    </div>
-  )
-}
-
-// Komponentti - nimien filtteröinti
-const Filter = ({setFilter}) => {
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
-  return (
-    <div>filter shown with <input onChange={handleFilterChange}/></div>
-  ) 
-}
-
-// Komponentti - lomake nimen ja numeron lisäämiselle
-const PersonForm = ({addName, newName, handleNameChange, handleNumberChange, newNumber}) => {
-  return (
-    <div>
-      <form onSubmit={addName}>
-        <div>name: <input value = {newName} onChange={handleNameChange}/></div>
-        <div>number: <input value = {newNumber} onChange={handleNumberChange}/></div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    </div>
-  )
-}
+import Filter from './components/Filter'
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
 
 
 const App = () => {
@@ -69,7 +24,6 @@ const App = () => {
         setPersons(initialPersons)
       })
   }, [])
-
 
   // Tapahtumankäsittelijä "name" -kentälle
   const handleNameChange = (event) => {
@@ -94,6 +48,7 @@ const App = () => {
     }
   }
 
+  // Tapahtumankäsittelijä notifikaatioille
   const handleNotification = (message, type) => {
     setNotificationStyle(type)
           setNotificationMessage(message)
@@ -113,7 +68,6 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           handleNotification(`Added ${newName}`, 'successful') 
         })
-        console.log(notificationStyle)
     }
     else {
       const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number
@@ -128,6 +82,9 @@ const App = () => {
             updatedPersons[index] = returnedPerson                      // Lopullinen päivitetty lista
             setPersons(updatedPersons)
             handleNotification(`Updated ${newName}`, 'successful')   
+          }).catch(error => {  //Käsittelee virheen, kun käyttäjä on poistettu ennen päivityksen tekemistä
+            setPersons(persons.filter(p => p.id !== id))
+            handleNotification(`Information of ${personObject.name} has already been removed from the server`, 'error')
           })
       }
     }
