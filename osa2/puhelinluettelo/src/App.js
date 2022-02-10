@@ -68,6 +68,10 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           handleNotification(`Added ${newName}`, 'successful') 
         })
+        .catch(error => {
+          console.log(error.response.data)
+          handleNotification(error.response.data, 'error')
+        })
     }
     else {
       const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number
@@ -94,7 +98,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>
+      <h1>Phonebooki</h1>
       <Notification message={notificationMessage} type = {notificationStyle} />
       <Filter setFilter = {setFilter} />
       <h2>Add a new</h2>
