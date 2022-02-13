@@ -5,7 +5,6 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 
-
 const App = () => {
   // Tilat
   const [persons, setPersons] = useState([])
@@ -86,9 +85,13 @@ const App = () => {
             updatedPersons[index] = returnedPerson                      // Lopullinen päivitetty lista
             setPersons(updatedPersons)
             handleNotification(`Updated ${newName}`, 'successful')   
-          }).catch(error => {  //Käsittelee virheen, kun käyttäjä on poistettu ennen päivityksen tekemistä
-            setPersons(persons.filter(p => p.id !== id))
-            handleNotification(`Information of ${personObject.name} has already been removed from the server`, 'error')
+          }).catch(error => {  //Käsittelee virheen, kun käyttäjä on poistettu ennen päivityksen tekemistä tai numero ei ole sopiva
+            if (error instanceof TypeError) {
+              setPersons(persons.filter(p => p.id !== id))
+              handleNotification(`Information of ${personObject.name} has already been removed from the server`, 'error')
+            } else {
+              handleNotification(error.response.data, 'error')
+            }
           })
       }
     }
