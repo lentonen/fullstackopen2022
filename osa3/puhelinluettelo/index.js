@@ -16,9 +16,6 @@ app.get('/info', (req, res) => {
   Person.countDocuments({}, function(err, count){
     res.send(`<p>Phonebook has info for ${count} people</p><p>${new Date()}</p>`)
   })
-  //Person.find({})
-  //  .then(res.send(`<p>Phonebook has info ${Person.count} for people</p><p></p>`))
-  //res.send(`<p>Phonebook has info for ${persons.length} people</p><p>${new Date()}</p>`)
 })
 
 app.get('/api/persons', (req, res) => {
