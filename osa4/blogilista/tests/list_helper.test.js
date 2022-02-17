@@ -89,7 +89,7 @@ describe('total likes', () => {
 describe('favorite blog', () => {
 
   test('of empty list is empty', () => {
-    expect(favoriteBlog([])).toEqual(null)
+    expect(favoriteBlog([])).toEqual([])
   })
     
   test('when list has only one blog equals the only one', () => {

@@ -16,7 +16,7 @@ const favoriteBlog = (blogs) => {
     if (blog.likes > favoriteBlog.likes) favoriteBlog = blog
   })
   return blogs.length === 0
-    ? null
+    ? []
     : favoriteBlog
 }
 
