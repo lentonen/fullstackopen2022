@@ -1,6 +1,7 @@
 const listHelper = require('../utils/list_helper')
 const totalLikes = require('../utils/list_helper').totalLikes
 const favoriteBlog = require('../utils/list_helper').favoriteBlog
+const mostBlogs = require('../utils/list_helper').mostBlogs
 
 const blogs = [
   {
@@ -98,5 +99,22 @@ describe('favorite blog', () => {
     
   test('of a bigger list is correct', () => {
     expect(favoriteBlog(blogs).title).toBe('Canonical string reduction')
+  })
+})
+
+describe('mostBlogs', () => {
+
+  test('of empty list is empty', () => {
+    expect(mostBlogs([])).toEqual([])
+  })
+    
+  test('when list has only one blog equals the only one', () => {
+    expect(mostBlogs(listWithOneBlog).author).toEqual(listWithOneBlog[0].author)
+    expect(mostBlogs(listWithOneBlog).blogs).toEqual(1)
+  })
+    
+  test('of a bigger list is correct', () => {
+    expect(mostBlogs(blogs).author).toBe('Robert C. Martin')
+    expect(mostBlogs(blogs).blogs).toBe(3)
   })
 })
