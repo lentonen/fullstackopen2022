@@ -11,6 +11,11 @@ beforeEach(async () => {
 })
 
 
+afterAll(() => {
+  mongoose.connection.close()
+})
+
+
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
@@ -26,7 +31,7 @@ test('identification is defined as id', async () => {
 })
 
 
-test('blog is added', async () => {
+test('valid blog is added', async () => {
   const newBlog = {
     id: '12',
     title: 'Test book title',
@@ -47,4 +52,24 @@ test('blog is added', async () => {
   expect(titles).toContain(
     'Test book title'
   )
+})
+
+
+test('blog with empty likes field is setting likes to zero', async () => {
+  const newBlogWithEmptyLikes = {
+    id: '100',
+    title: 'Book with empty likes',
+    author: 'Ernie Empty',
+    url: 'https://empty.com/',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlogWithEmptyLikes)
+    .expect(201)
+  
+  const blogsAtEnd = await helper.blogsInDb()
+  const addedBlog = blogsAtEnd.filter(blog => blog.author==='Ernie Empty')
+  expect(addedBlog[0].likes).toBe(0)
+
 })
