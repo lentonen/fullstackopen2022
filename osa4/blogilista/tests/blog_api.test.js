@@ -24,3 +24,27 @@ test('identification is defined as id', async () => {
 
   expect(firstBlog.id).toBeDefined()
 })
+
+
+test('blog is added', async () => {
+  const newBlog = {
+    id: '12',
+    title: 'Test book title',
+    author: 'Test Author',
+    url: 'https://example.com/',
+    likes: 10
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+  
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length+1)
+
+  const titles = blogsAtEnd.map(blog => blog.title)
+  expect(titles).toContain(
+    'Test book title'
+  )
+})
