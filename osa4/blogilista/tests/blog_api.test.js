@@ -16,3 +16,11 @@ test('all blogs are returned', async () => {
 
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
+
+
+test('identification is defined as id', async () => {
+  const response = await api.get('/api/blogs')
+  const firstBlog = response.body[0]
+
+  expect(firstBlog.id).toBeDefined()
+})
