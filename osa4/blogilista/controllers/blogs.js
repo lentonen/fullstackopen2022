@@ -16,10 +16,16 @@ blogsRouter.post('/', async (request, response) => {
     url: body.url,
     likes: body.likes || 0
   })
-  
-  console.log(blog)
-  const result = await blog.save()
-  response.status(201).json(result)
+
+  if (typeof blog.title !== 'undefined' && typeof blog.url !== 'undefined') {
+    console.log('if')
+    const result = await blog.save()
+    response.status(201).json(result)
+  }
+  else {
+    console.log('else')
+    response.status(400).end()
+  } 
 })
 
 module.exports = blogsRouter

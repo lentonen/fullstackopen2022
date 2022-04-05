@@ -71,5 +71,70 @@ test('blog with empty likes field is setting likes to zero', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   const addedBlog = blogsAtEnd.filter(blog => blog.author==='Ernie Empty')
   expect(addedBlog[0].likes).toBe(0)
+})
 
+describe('POST request tests', () => {
+
+  test('blog with missing title field is not added"', async () => {
+    const newBlogWithoutTitle = {
+      id: '100',
+      author: 'Ernie Empty',
+      url: 'https://empty.com/',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutTitle)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+
+  test('blog with missing url field is not added"', async () => {
+    const newBlogWithoutUrl = {
+      id: '100',
+      title: 'Book with empty likes',
+      author: 'Ernie Empty'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutUrl)
+      .expect(400)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+
+  test('blog with missing title and url fields is not added"', async () => {
+    const newBlogWithoutTitleAndUrl = {
+      id: '100',
+      author: 'Ernie Empty'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutTitleAndUrl)
+      .expect(400)
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('request with title and url fields is added', async () => {
+    const newBlogWithoutTitle = {
+      title: 'Test book title',
+      url: 'https://empty.com/'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlogWithoutTitle)
+      .expect(201)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+  })
 })
