@@ -160,3 +160,37 @@ describe('Deletion of a blog', () => {
     expect(titles).not.toContain(blogToDelete.title)
   })
 })
+
+describe('Updating existing blogs', () => {
+  test('update likes when blog exists', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const updatedBlog = {...blogToUpdate, likes:`${blogToUpdate.likes + 1}`}
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    const earlierUpdatedBlog = blogsAtEnd[0]
+    expect(earlierUpdatedBlog.likes).toBe(blogToUpdate.likes + 1)
+  })
+
+  test('updating fails when blog not exists', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    const updatedBlog = {...blogToUpdate, likes:`${blogToUpdate.likes + 1}`}
+
+    await api
+      .put('/api/blogs/1a23')
+      .send(updatedBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd[0].likes).not.toBe(updatedBlog.likes)
+    
+  })
+
+})
