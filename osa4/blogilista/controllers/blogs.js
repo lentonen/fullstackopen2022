@@ -13,48 +13,37 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
-  const token = getTokenFrom(request)
-  let decodedToken
   try {
-    decodedToken = jwt.verify(token, process.env.secret)
-    if (!token || !decodedToken.id) {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!request.token || !decodedToken.id) {
       return response.status(401).json({ error: 'token missing or invalid' })
     }
-  } catch (error) {
+
+    const user = await User.findById(decodedToken.id)
+
+    const blog = new Blog({
+      id: body.id,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      user: user._id
+    })
+
+    if (typeof blog.title !== 'undefined' && typeof blog.url !== 'undefined') {
+      const savedBlog = await blog.save()
+      user.blogs = user.blogs.concat(savedBlog._id)
+      await user.save()
+      response.status(201).json(savedBlog)
+    }
+    else {
+      response.status(400).end()
+    } 
+  }
+  catch (error) {
     next(error)
   }
- 
-
-  const user = await User.findById(decodedToken.id)
-
-  const blog = new Blog({
-    id: body.id,
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes || 0,
-    user: user._id
-  })
-
-  if (typeof blog.title !== 'undefined' && typeof blog.url !== 'undefined') {
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
-    response.status(201).json(savedBlog)
-  }
-  else {
-    response.status(400).end()
-  } 
 })
-
-
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
 
 
 blogsRouter.delete('/:id', async (request, response) => {
